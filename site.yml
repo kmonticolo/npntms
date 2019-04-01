@@ -1,0 +1,33 @@
+---
+- name: bootstrap
+  hosts: npntms
+  gather_facts: false
+
+  roles: 
+  - robertdebock.bootstrap
+
+#- name: apt upgrade
+#  hosts: npntmsfront
+#  roles:
+#    - weareinteractive.apt
+#  vars:
+#    apt_cache_valid_time: 7200
+#    apt_mails:
+#      - root
+#    apt_unattended_upgrades_notify_error_only: no
+#
+
+- name: apt upgrade
+  hosts: npntmsfront
+  tasks:
+  - apt:
+      upgrade: yes
+      state: latest
+
+- name: "Add user"
+  hosts: npntms
+  become: True
+
+  roles:
+    - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
+    - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
