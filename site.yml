@@ -17,12 +17,21 @@
 #    apt_unattended_upgrades_notify_error_only: no
 #
 
-- name: apt upgrade
-  hosts: npntmsfront
+- name: set password adam
+  hosts: npntms
   tasks:
-  - apt:
-      upgrade: yes
-      state: latest
+  - user:
+      name: adam
+      password: $6$1FR4d4zj$6LgmXa9yavJbY5iohV5exWrv183QYiE4zcAKCBf239E06yA5S0mKJnuRFipdhadkah.g8vxYMcQarRtizu/.50
+  tags: user
+
+- name: apt upgrade
+  hosts: npntms
+  tasks:
+   - name: updates a server
+     apt: update_cache=yes
+   - name: upgrade a server
+     apt: upgrade=dist
 
 - name: "Add user"
   hosts: npntms
@@ -31,3 +40,55 @@
   roles:
     - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
     - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
+
+- name: NTP setup
+  hosts: npntms
+  become: yes
+  roles:
+    - geerlingguy.ntp
+  tags: ntp
+
+- name: install and configure fail2ban
+  import_playbook: fail2ban.yml
+  tags: fail2ban
+
+- name: ipv6 disable
+  import_playbook: ipv6_disable.yml
+  tags: ipv6
+# frontend
+- name: ufw | Allow http/s incoming port on frontend
+  hosts: npntmsfront
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        to_port: 80
+        protocol: tcp
+      - rule: allow
+        to_port: 443
+        protocol: tcp
+      - rule: allow
+        to_port: 4747
+        protocol: tcp
+      - rule: allow
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
+
+- name: ufw | Allow all traffic between hosts and sites
+  hosts: npntmsamq, npntmswildfly, npntmsdb
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
+      - rule: allow
+        to_port: 22
+        protocol: tcp

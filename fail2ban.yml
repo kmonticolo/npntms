@@ -1,0 +1,29 @@
+---
+# install
+- hosts: npntms
+  become: yes
+  roles:
+     - robertdebock.fail2ban
+
+# configure
+- hosts: npntms
+  become: yes
+  vars:
+    ignoreip:
+     - 109.231.4.120
+     - 78.235.208.85
+     - 185.234.233.212
+     - 31.214.140.146
+     - 5.184.1.199
+     - 77.55.224.78
+     - 79.189.18.141
+     - 80.211.116.113
+     - 93.105.177.100
+    manala_fail2ban_config:
+      - sshd:
+        - enabled: true
+        #- ignoreip: "{{ ignoreip }}"
+      - DEFAULT:
+        - maxretry: 5
+  roles:
+    - manala.fail2ban

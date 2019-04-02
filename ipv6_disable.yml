@@ -1,0 +1,4 @@
+- hosts: npntms
+  become: true
+  roles:
+    - ansible-ipv6
