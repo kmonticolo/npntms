@@ -17,6 +17,11 @@
 #    apt_unattended_upgrades_notify_error_only: no
 #
 
+- name: set hostname from inventory
+  hosts: npntms
+  roles:
+    - anxs.hostname
+
 - name: set password adam
   hosts: npntms
   tasks:
