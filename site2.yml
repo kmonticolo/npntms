@@ -10,10 +10,10 @@
 
 
   tasks:
-  - lineinfile:
+  - name: set preserve_hostname
+    lineinfile:
       dest: /etc/cloud/cloud.cfg
       regexp: '^preserve_hostname'
       line: 'preserve_hostname: true'
       state: present
-
-      
+    tags: hostname
