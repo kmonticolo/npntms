@@ -30,6 +30,16 @@
       password: $6$1FR4d4zj$6LgmXa9yavJbY5iohV5exWrv183QYiE4zcAKCBf239E06yA5S0mKJnuRFipdhadkah.g8vxYMcQarRtizu/.50
   tags: user
 
+- name: preserve hostnames in cloudinit
+  hosts: npntms
+  tasks:
+  - lineinfile: 
+      dest: /etc/cloud/cloud.cfg
+      regexp: '^preserve_hostname'
+      line: 'preserve_hostname: true'
+      state: present
+
+
 - name: apt upgrade
   hosts: npntms
   tasks:
@@ -98,4 +108,12 @@
         to_port: 22
         protocol: tcp
 
+- name: install Postgresql
+  hosts: npntmsdb
+  become: yes
+  vars_files:
+    - vars/npntmsdb2.yml
+  roles:
+    - geerlingguy.postgresql
+  tags: db
 
