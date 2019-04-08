@@ -1,0 +1,19 @@
+---
+- name: bootstrap
+  hosts: npntms
+  gather_facts: false
+  roles:
+    - { role: robertdebock.bootstrap, tags: bootstrap }
+    - { role: anxs.hostname, tags: hostname }
+
+
+
+
+  tasks:
+  - lineinfile:
+      dest: /etc/cloud/cloud.cfg
+      regexp: '^preserve_hostname'
+      line: 'preserve_hostname: true'
+      state: present
+
+      
