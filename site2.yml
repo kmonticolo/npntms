@@ -5,6 +5,14 @@
   roles:
     - { role: robertdebock.bootstrap, tags: bootstrap }
     - { role: anxs.hostname, tags: hostname }
+    - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
+    - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
+    - { role: geerlingguy.ntp, tags: ntp }
+
+
+
+
+
 
 
 
@@ -17,3 +25,20 @@
       line: 'preserve_hostname: true'
       state: present
     tags: hostname
+
+  - name: set password adam
+    user:
+      name: adam
+      password: $6$1FR4d4zj$6LgmXa9yavJbY5iohV5exWrv183QYiE4zcAKCBf239E06yA5S0mKJnuRFipdhadkah.g8vxYMcQarRtizu/.50
+    tags: user
+
+  - name: set up LVM
+    lvol:
+      vg: ubuntu-vg
+      lv: ubuntu-lv
+      size: 23G
+    tags: lvm
+
+  - name: install and configure fail2ban
+    import_playbook: fail2ban.yml
+    tags: fail2ban
