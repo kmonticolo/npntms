@@ -27,6 +27,14 @@
       line: 'preserve_hostname: true'
       state: present
 
+- name: set up LVM
+  hosts: npntms
+  tasks:
+  - lvol: 
+      vg: ubuntu-vg
+      lv: ubuntu-lv
+      size: 23G
+    tags: lvm
 
 - name: apt upgrade
   hosts: npntms
