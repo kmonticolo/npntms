@@ -50,16 +50,6 @@
        to_port: 22
        protocol: tcp
 
-
-
-
-
-
-
-
-
-
-
   tasks:
   - name: set preserve_hostname
     lineinfile:
@@ -80,7 +70,9 @@
       vg: ubuntu-vg
       lv: ubuntu-lv
       size: 23G
+      ignore_errors: true
     tags: lvm
+
   #
   # - name: install and configure fail2ban
   #   import_playbook: fail2ban.yml
