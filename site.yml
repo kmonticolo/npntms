@@ -2,25 +2,13 @@
 - name: bootstrap
   hosts: npntms
   gather_facts: false
-
   roles: 
-  - robertdebock.bootstrap
+  - { role: robertdebock.bootstrap, tags: bootstrap }
 
-#- name: apt upgrade
-#  hosts: npntmsfront
-#  roles:
-#    - weareinteractive.apt
-#  vars:
-#    apt_cache_valid_time: 7200
-#    apt_mails:
-#      - root
-#    apt_unattended_upgrades_notify_error_only: no
-#
-
-- name: set hostname from inventory
+- name: set hostname
   hosts: npntms
-  roles:
-    - anxs.hostname
+  roles: 
+  - { role: anxs.hostname, tags: hostname }
 
 - name: set password adam
   hosts: npntms
