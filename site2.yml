@@ -8,6 +8,49 @@
     - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
     - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
     - { role: geerlingguy.ntp, tags: ntp }
+    - { role: ansible-ipv6, tags: ipv6 }
+    - { role: oefenweb.ufw, tags: ufw}
+
+# todo  fail2ban
+
+- name: ufw | Allow http/s incoming port on frontend
+ hosts: npntmsfront
+ roles:
+   - oefenweb.ufw
+ vars:
+   ufw_rules:
+     - rule: allow
+       to_port: 80
+       protocol: tcp
+     - rule: allow
+       to_port: 443
+       protocol: tcp
+     - rule: allow
+       to_port: 4747
+       protocol: tcp
+     - rule: allow
+       to_port: 22
+       protocol: tcp
+     - rule: allow
+       from_ip: 192.99.119.24/28
+     - rule: allow
+       from_ip: 51.77.198.196/28
+
+- name: ufw | Allow all traffic between hosts and sites
+ hosts: npntmsamq, npntmswildfly, npntmsdb
+ roles:
+   - oefenweb.ufw
+ vars:
+   ufw_rules:
+     - rule: allow
+       from_ip: 192.99.119.24/28
+     - rule: allow
+       from_ip: 51.77.198.196/28
+     - rule: allow
+       to_port: 22
+       protocol: tcp
+
+
 
 
 
@@ -38,7 +81,7 @@
       lv: ubuntu-lv
       size: 23G
     tags: lvm
-
-  - name: install and configure fail2ban
-    import_playbook: fail2ban.yml
-    tags: fail2ban
+  #
+  # - name: install and configure fail2ban
+  #   import_playbook: fail2ban.yml
+  #   tags: fail2ban
