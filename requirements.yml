@@ -1,0 +1,18 @@
+---
+
+# postgres role from enix (https://galaxy.ansible.com/enix/postgresql)
+- src: enix.postgresql
+# postgresql installation and management
+- src: geerlingguy.postgresql
+# bootstrap role
+- src: robertdebock.bootstrap
+# set hostname
+- src: anxs.hostname
+# create users with sudo and pubkeys
+- src: nickjj.user
+# set NTP
+- src: geerlingguy.ntp
+# ansible-ipv6 disable
+- src: ansible-ipv6
+# role for ufw management
+- src: oefenweb.ufw
