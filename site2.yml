@@ -14,41 +14,41 @@
 # todo  fail2ban
 
 - name: ufw | Allow http/s incoming port on frontend
- hosts: npntmsfront
- roles:
-   - oefenweb.ufw
- vars:
-   ufw_rules:
-     - rule: allow
-       to_port: 80
-       protocol: tcp
-     - rule: allow
-       to_port: 443
-       protocol: tcp
-     - rule: allow
-       to_port: 4747
-       protocol: tcp
-     - rule: allow
-       to_port: 22
-       protocol: tcp
-     - rule: allow
-       from_ip: 192.99.119.24/28
-     - rule: allow
-       from_ip: 51.77.198.196/28
+  hosts: npntmsfront
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        to_port: 80
+        protocol: tcp
+      - rule: allow
+        to_port: 443
+        protocol: tcp
+      - rule: allow
+        to_port: 4747
+        protocol: tcp
+      - rule: allow
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
 
 - name: ufw | Allow all traffic between hosts and sites
- hosts: npntmsamq, npntmswildfly, npntmsdb
- roles:
-   - oefenweb.ufw
- vars:
-   ufw_rules:
-     - rule: allow
-       from_ip: 192.99.119.24/28
-     - rule: allow
-       from_ip: 51.77.198.196/28
-     - rule: allow
-       to_port: 22
-       protocol: tcp
+  hosts: npntmsamq, npntmswildfly, npntmsdb
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
+      - rule: allow
+        to_port: 22
+        protocol: tcp
 
   tasks:
   - name: set preserve_hostname
