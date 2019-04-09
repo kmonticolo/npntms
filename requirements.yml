@@ -13,6 +13,6 @@
 # set NTP
 - src: geerlingguy.ntp
 # ansible-ipv6 disable
-- src: ansible-ipv6
+- src: juju4.ipv6
 # role for ufw management
 - src: oefenweb.ufw
