@@ -10,6 +10,7 @@
     - { role: geerlingguy.ntp, tags: ntp }
     - { role: ansible-ipv6, tags: ipv6 }
     - { role: oefenweb.ufw, tags: ufw}
+    - { role: geerlingguy.postgresql, vars_files: "vars/npntmsdb2.yml", tags: db}
 
 # todo  fail2ban
 
@@ -70,7 +71,7 @@
       vg: ubuntu-vg
       lv: ubuntu-lv
       size: 23G
-      ignore_errors: true
+    ignore_errors: true
     tags: lvm
 
   #
