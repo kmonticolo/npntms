@@ -1,7 +1,9 @@
 ---
 
-# postgres role from enix (https://galaxy.ansible.com/enix/postgresql)
+# postgres role from enix (https://galaxy.ansible.com/enix/postgresql) needed by replication
 - src: enix.postgresql
+# postgres role for replication (https://galaxy.ansible.com/enix/postgresql_replication)
+- src: enix.postgresql_replication
 # postgresql installation and management
 - src: geerlingguy.postgresql
 # bootstrap role
