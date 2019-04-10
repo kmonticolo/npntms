@@ -18,3 +18,5 @@
 - src: juju4.ipv6
 # role for ufw management
 - src: oefenweb.ufw
+# role for ssh hardening
+- src: diodonfrost.ssh_hardening
