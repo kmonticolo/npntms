@@ -20,3 +20,5 @@
 - src: oefenweb.ufw
 # role for ssh hardening
 - src: diodonfrost.ssh_hardening
+# role for nginx hardening
+- src: dev-sec.nginx-hardening
