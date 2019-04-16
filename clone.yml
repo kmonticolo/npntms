@@ -1,0 +1,102 @@
+---
+- name: 'clone vm'
+  hosts: 'localhost'
+  gather_facts: false
+  vars:
+    node: ns525819
+    apihost: ns525819.ip-142-4-215.net
+    vm:
+      front1:
+        id: 101
+        mac: 02:00:00:79:0a:24
+        cores: 2
+        memory: 2048
+      amq1:
+        id: 102
+        mac: 02:00:00:33:04:27 
+        cores: 2
+        memory: 2048
+      wf1:
+        id: 103
+        mac: 02:00:00:7b:ba:40
+        cores: 2
+        memory: 4096
+      db1:
+        id: 104
+        mac: 02:00:00:d4:d4:93
+        cores: 4
+        memory: 6200
+
+  tasks:
+    - name: clone vm
+      proxmox_kvm:
+        api_user    : root@pam
+        api_host    : "{{ apihost }}"
+        clone       : ubutemplate # The VM source
+        name        : "{{ item.key }}" # The target VM name
+        newid       : "{{ item.value.id }}"
+        node        : "{{ node }}"
+        #cores       : "{{ item.value.cores }}"
+        #memory      : "{{ item.value.memory }}"
+        storage     : local
+        format      : qcow2
+        #state       : started
+        timeout     : 500  # Note: The task can take a while. Adapt
+        #net         : '{"net0":"virtio=02:00:00:D4:D4:99,bridge=vmbr0"}'
+      loop: "{{ lookup('dict', vm) }}"
+
+# poprawa MAC
+# create() {   qm status $1 | grep -q running >/dev/null || qm clone 9000 $1 --name $5;   qm set $1 --net0 virtio="$2",bridge=vmbr0;   qm set $1 --ipconfig0 ip="$3"/32,gw="$4";   qm set $1 --sshkey ./id_rsa.pub;   qm status $1 | grep -q running || qm start $1;   }
+# create 101 02:00:00:79:0a:24 192.99.119.24 142.4.215.254 front1
+# create 102 02:00:00:33:04:27 192.99.119.25 142.4.215.254 amq1
+# create 103 02:00:00:7b:ba:40 192.99.119.26 142.4.215.254 wf1
+# create 104 02:00:00:d4:d4:93 192.99.119.27 142.4.215.254 db1
+#
+
+      
+- name: proxmox1
+  hosts: proxmox1
+  gather_facts: false
+  vars:
+    node: ns525819
+    apihost: ns525819.ip-142-4-215.net
+    vm:
+      front1:
+        id: 101
+        mac: 02:00:00:79:0a:24
+        cores: 2
+        memory: 2048
+      amq1:
+        id: 102
+        mac: 02:00:00:33:04:27 
+        cores: 2
+        memory: 2048
+      wf1:
+        id: 103
+        mac: 02:00:00:7b:ba:40
+        cores: 2
+        memory: 4096
+      db1:
+        id: 104
+        mac: 02:00:00:d4:d4:93
+        cores: 4
+        memory: 6200
+
+
+  tasks:
+    - name: change settings
+      command: 'qm set "{{ item.value.id }}" --net0 virtio="{{ item.value.mac }}",bridge=vmbr0 --cores "{{ item.value.cores }}" --memory "{{ item.value.memory }}"'
+      loop: "{{ lookup('dict', vm) }}"
+
+    - name:  start vm
+      command: qm start "{{ item.value.id }}" 
+      loop: "{{ lookup('dict', vm) }}"
+      ignore_errors: true
+# restartowac tylko gdy siec nie dziala
+
+    - name:  restart vm to make network work
+      command: qm reset "{{ item.value.id }}" 
+      loop: "{{ lookup('dict', vm) }}"
+
+
+
