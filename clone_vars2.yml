@@ -1,0 +1,25 @@
+# proxmox 2 (db master)
+node: ns303597
+apihost: ns303597.ip-94-23-207.eu
+vm:
+  front2:
+    id: 101
+    mac: 02:00:00:20:8d:11
+    cores: 2
+    memory: 2048
+  amq2:
+    id: 102
+    mac: 02:00:00:66:07:04
+    cores: 2
+    memory: 2048
+  wf2:
+    id: 103
+    mac: 02:00:00:05:6e:4d
+    cores: 2
+    memory: 4096
+  db2:
+    id: 104
+    mac: 02:00:00:52:78:75
+    cores: 4
+    memory: 6200
+
