@@ -1,56 +1,39 @@
 ---
+#- name: remove unattended updates
+#  hosts: npntms
+#  gather_facts: false
+#  tasks:
+#  - name: remove unattended updates
+#    raw:  sed -i 's/APT::Periodic::Update-Package-Lists "1"\;/APT::Periodic::Update-Package-Lists "0"\;/' /etc/apt/apt.conf.d/20auto-upgrades
+
 - name: bootstrap
   hosts: npntms
   gather_facts: false
   roles:
-    - { role: robertdebock.bootstrap, tags: bootstrap }
+    - { role: robertdebock.bootstrap, bootstrap_retries: 30, tags: bootstrap }
     - { role: anxs.hostname, tags: hostname }
     - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
     - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
     - { role: geerlingguy.ntp, tags: ntp }
     - { role: ansible-ipv6, tags: ipv6 }
-    - { role: oefenweb.ufw, tags: ufw}
-    - { role: geerlingguy.postgresql, vars_files: "vars/npntmsdb2.yml", tags: db}
+
 
 # todo  fail2ban
 
 - name: ufw | Allow http/s incoming port on frontend
-  hosts: npntmsfront
-  roles:
-    - oefenweb.ufw
-  vars:
-    ufw_rules:
-      - rule: allow
-        to_port: 80
-        protocol: tcp
-      - rule: allow
-        to_port: 443
-        protocol: tcp
-      - rule: allow
-        to_port: 4747
-        protocol: tcp
-      - rule: allow
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 192.99.119.24/28
-      - rule: allow
-        from_ip: 51.77.198.196/28
+  import_playbook: ufw.yml
+  tags: ufw
 
-- name: ufw | Allow all traffic between hosts and sites
-  hosts: npntmsamq, npntmswildfly, npntmsdb
-  roles:
-    - oefenweb.ufw
-  vars:
-    ufw_rules:
-      - rule: allow
-        from_ip: 192.99.119.24/28
-      - rule: allow
-        from_ip: 51.77.198.196/28
-      - rule: allow
-        to_port: 22
-        protocol: tcp
+- name: ssh-hardening
+  import_playbook: ssh_harden.yml
+  tags: sshharden
 
+- name: nginx-hardening
+  import_playbook: nginx_harden.yml
+  tags: nginxharden
+
+- name: preserve hostname
+  hosts: npntms
   tasks:
   - name: set preserve_hostname
     lineinfile:
@@ -70,11 +53,19 @@
     lvol:
       vg: ubuntu-vg
       lv: ubuntu-lv
-      size: 23G
+      size: +100%FREE
     ignore_errors: true
     tags: lvm
 
-  #
-  # - name: install and configure fail2ban
-  #   import_playbook: fail2ban.yml
-  #   tags: fail2ban
+  - name: resize
+    command: resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+    tags: lvm
+
+- name: install Postgresql
+  hosts: postgresql
+  become: yes
+  vars_files:
+    - vars/npntmsdb2.yml
+  roles:
+    - geerlingguy.postgresql
+  tags: db
