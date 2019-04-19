@@ -14,4 +14,4 @@ postgresql_databases:
   - name: ntms
 postgresql_users:
   - name: ntms
-    password: ntms1234#
+    password: tajne
