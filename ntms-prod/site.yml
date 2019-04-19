@@ -1,0 +1,16 @@
+---
+
+- name: install graylog
+  import_playbook: graylog.yml
+
+- name: syslog to graylog
+  import_playbook: graylog_client.yml
+
+- name: install ActiveMQ
+  import_playbook: amq.yml
+
+- name: Install backend
+  import_playbook: wildfly.yml
+
+- name: install gui
+  import_playbook: frontend.yml

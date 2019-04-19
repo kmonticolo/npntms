@@ -1,0 +1,4 @@
+---
+
+- include_tasks: install.yml
+  when: "'nginx' in group_names"

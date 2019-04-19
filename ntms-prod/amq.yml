@@ -1,0 +1,11 @@
+---
+# file fonntend.yml
+- hosts: activemq
+  become: yes
+  become_user: "{{ superuser }}"
+  remote_user: "{{ initial_user }}"
+
+
+  roles:
+    - java
+    - activemq

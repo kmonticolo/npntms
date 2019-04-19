@@ -1,0 +1,71 @@
+- name: ufw | Allow http/s incoming port on frontend
+  hosts: npntmsfront
+  gather_facts: true
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        to_port: 80
+        protocol: tcp
+      - rule: allow
+        to_port: 443
+        protocol: tcp
+      - rule: allow
+        to_port: 4747
+        protocol: tcp
+      - rule: allow
+        to_port: 22
+        protocol: tcp
+      # terminale
+      - rule: allow
+        to_port: 8443
+        protocol: tcp
+      - rule: allow
+        to_port: 8453
+        protocol: tcp
+      - rule: allow
+        to_port: 4832
+      # koniec terminale
+        protocol: tcp
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
+
+- name: ufw | Allow all traffic between hosts and sites
+  hosts: npntmsamq, npntmswildfly, postgresql
+  gather_facts: true
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
+      - rule: allow
+        to_port: 22
+        protocol: tcp
+
+- name: ufw | Allow old ntms traffic
+  hosts: wf2.novelpay.pl
+  gather_facts: true
+  roles:
+    - oefenweb.ufw
+  vars:
+    ufw_rules:
+      - rule: allow
+        from_ip: 192.99.119.24/28
+      - rule: allow
+        from_ip: 51.77.198.196/28
+      - rule: allow
+        to_port: 22
+        protocol: tcp
+# allow old ntms traffic
+      - rule: allow
+        from_ip: 178.32.205.89/32
+        to_port: 8080
+        protocol: tcp
+
+

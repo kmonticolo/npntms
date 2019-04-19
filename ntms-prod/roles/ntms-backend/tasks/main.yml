@@ -1,0 +1,25 @@
+---
+
+- name: collect facts about system services
+  service_facts:
+  register: services_state
+  tags:
+    - ntms
+
+
+- name: czy aplikacja ntms w deploymencie
+  stat:
+    path: "{{ wildfly_home }}/standalone/deployments/ntms-application.war"
+  register: ntms_app_check
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+  tags:
+    - ntms
+
+#  when: "'wildfly' in group_names and ntms_app_check.stat.exists == False"
+
+- include_tasks: backend.yml
+  when: "'wildfly' in group_names"
+  tags:
+    - ntms

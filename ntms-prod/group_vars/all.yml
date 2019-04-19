@@ -1,0 +1,18 @@
+initial_user: kamil
+superuser: root
+#ansible_become_pass: '{{ hubs_abr_sudo_pass }}'
+#sshd_config: /etc/ssh/sshd_config
+#art_user: art
+
+
+#wildfly_download_url: http://download.jboss.org/wildfly/15.0.0.Final/wildfly-15.0.0.Final.zip
+#wildfly_main_dir_name: wildfly-15.0.0.Final
+#wildfly_home: /opt/wildfly
+
+#local_backup_dir: /Users/adam/BACKUP
+
+#additional_domains:
+#no_proxy_domains:
+#sudo_user_group: sudo
+#nexus_user: deployer
+#nexus_password: deployer1234#

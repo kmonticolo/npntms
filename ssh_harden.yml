@@ -1,0 +1,5 @@
+---
+- hosts: npntms
+  become: true
+  roles:
+    - role: diodonfrost.ssh_hardening

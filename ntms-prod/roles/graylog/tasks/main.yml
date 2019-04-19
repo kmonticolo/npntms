@@ -1,0 +1,6 @@
+---
+
+- include_tasks: install.yml
+  when: "'graylog' in group_names"
+  tags:
+    - graylog

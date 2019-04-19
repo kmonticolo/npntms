@@ -1,0 +1,74 @@
+server {
+        listen 8443 ssl default_server;
+        listen 8453 ssl default_server;
+        listen 4832 ssl default_server;
+
+        root {{ ntms_www_root }};
+
+        # Add index.php to the list if you are using PHP
+        index index.html;
+
+        access_log   /var/log/nginx/ntms_term_access.log;
+        error_log    /var/log/nginx/ntms_term_error.log debug;
+
+        ssl_certificate_key /etc/nginx/ssl/ntms.key;
+        ssl_certificate     /etc/nginx/ssl/ntms.crt;
+        add_header Strict-Transport-Security max-age=31536000 always;
+        add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'self'; connect-src 'self' https://teservice.artifact.pl";
+
+        ssl_stapling on;
+        resolver 127.0.0.1;
+        ssl_stapling_verify on;
+
+        ssl_session_cache shared:ssl_session_cache:5m;
+
+        client_max_body_size 100m;
+	      ssl_client_certificate /etc/nginx/ssl/ntmsca.crt;
+	      ssl_verify_client off;
+
+        location / {
+                try_files $uri $uri/ /index.html =404;
+                rewrite ^/app/$ /index.html redirect;
+                add_header Cache-Control must-revalidate; # Indicate that the resource must be revalidated at each access
+                etag on; # Add an ETag header with an identifier that can be stored by the client
+                # HSTS
+                add_header Strict-Transport-Security max-age=31536000 always;
+                add_header Content-Security-Policy "default-src 'self' 'unsafe-eval'; frame-ancestors 'self';  style-src 'self' 'unsafe-inline'; font-src 'self' data:;";
+        }
+
+        location /ntmss {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_pass http://{{ ntms_backend_address1 }}:8080/ntmss;
+                etag off;
+        }
+        location /ntmss/f {
+                proxy_set_header Host $host;
+                proxy_set_header Accept application/octet-stream;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Certificate-Dn $ssl_client_s_dn;
+                proxy_set_header X-Certificate-Verified $ssl_client_verify;
+                proxy_pass http://{{ ntms_backend_address1 }}:8080/ntmss/f;
+                chunked_transfer_encoding off;
+                etag off;
+        }
+
+        location /ntmss/e {
+                proxy_set_header Host $host;
+                proxy_set_header Accept application/octet-stream;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Certificate-Dn $ssl_client_s_dn;
+                proxy_set_header X-Certificate-Verified $ssl_client_verify;
+                proxy_pass http://{{ ntms_backend_address1 }}:8080/ntmss/e;
+                chunked_transfer_encoding off;
+                etag off;
+        }
+
+        location /ntms2 {
+                proxy_set_header Host $host;
+#                proxy_set_header X-Real-IP $remote_addr;
+                proxy_pass http://{{ ntms_backend_address1 }}:8080/ntmss;
+                etag off;
+        }
+
+}

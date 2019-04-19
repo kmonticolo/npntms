@@ -1,0 +1,15 @@
+---
+# The name of ssh daemon
+sshd: ssh
+
+# Where is ssh config is located at
+sshd_config: /etc/ssh/sshd_config
+
+wildfly_user: wildfly
+wildfly_home: /opt/wildfly
+
+wildfly_version: 15.0.0.Final
+wildfly_dnld_url: http://download.jboss.org/wildfly/15.0.0.Final/wildfly-15.0.0.Final.zip
+
+wildfly_xms: 512
+wildfly_xmx: 2048

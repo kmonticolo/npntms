@@ -1,0 +1,19 @@
+---
+- name: 'clone vm'
+  hosts: 'localhost'
+  gather_facts: false
+  vars:
+
+
+  tasks:
+    - name: clone vm
+      proxmox_kvm:
+        api_user    : root@pam
+        api_host    : ns303597.ip-94-23-207.eu
+        clone       : ubutemplate # The VM source
+        name        : front3test  # The target VM name
+        node        : ns303597
+        storage     : local
+        format      : qcow2
+        timeout     : 500  # Note: The task can take a while. Adapt
+        net         : '{"net0":"virtio=02:00:00:D4:D4:99,bridge=vmbr0"}'

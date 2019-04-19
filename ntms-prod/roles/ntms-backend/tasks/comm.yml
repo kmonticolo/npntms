@@ -1,0 +1,66 @@
+---
+
+- name: Debug
+  debug:
+    var: "services['{{ vtms_comm_service }}']"
+  tags:
+    - vtms
+
+
+- name: download and extract base communication package
+  unarchive:
+    src: "{{ vtms_cm_package_base_url }}/{{ ansible_architecture }}.zip"
+    dest: "{{ vtms_root_dir }}"
+    remote_src: yes
+    validate_certs: false
+    owner: art
+    group: art
+    creates: "{{ vtms_root_dir }}/CommunicationModule"
+  tags:
+    - vtms
+
+- name: copy startup/configuration files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{  item.dest }}"
+    owner: art
+    group: art
+  with_items:
+    - { src: 'files/communication/ep2_server', dest: '{{ vtms_root_dir }}/CommunicationModule/bin/'}
+    - { src: 'files/communication/local.properties', dest: '{{ vtms_root_dir }}/CommunicationModule/conf/'}
+    - { src: 'files/communication/log4j2.xml', dest: '{{ vtms_root_dir }}/CommunicationModule/conf/'}
+    - { src: 'files/communication/wrapper.conf', dest: '{{ vtms_root_dir }}/CommunicationModule/conf/'}
+  tags:
+    - vtms
+
+- name: make ep2_server executable
+  file:
+    path: "{{ vtms_root_dir }}/CommunicationModule/bin/ep2_server"
+    mode: "+x"
+  tags:
+    - vtms
+
+- name: download vtms application
+  get_url:
+    url: "https://repo.artifact.pl/nexus/service/local/artifact/maven/content?r=snapshots&g={{ vtms_group_id }}&a={{ vtms_comm_artifact_id }}&v={{ vtms_version }}&p=jar"
+    validate_certs: false
+    dest: "{{ vtms_root_dir }}/CommunicationModule/lib/ep2-server.jar"
+    url_username: "{{ nexus_user }}"
+    url_password: "{{ nexus_password }}"
+  tags:
+    - vtms
+
+- name: kopiowanie ustawien uslugi systemd
+  copy:
+    src: files/communication/systemd/vtms_cm.service
+    dest: /etc/systemd/system/vtms_cm.service
+  tags:
+    - vtms
+
+- name: rejestracja serwisu i uruchomienie uslugi vtms_cm
+  service:
+    name: vtms_cm
+    enabled: yes
+    state: started
+  tags:
+    - vtms

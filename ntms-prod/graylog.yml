@@ -1,0 +1,11 @@
+---
+# file fonntend.yml
+- hosts: graylog
+  become: yes
+  become_user: "{{ superuser }}"
+  remote_user: "{{ initial_user }}"
+
+
+  roles:
+    - java
+    - graylog

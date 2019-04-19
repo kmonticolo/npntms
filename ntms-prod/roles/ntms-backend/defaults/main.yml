@@ -1,0 +1,30 @@
+---
+
+ntms_group_id: pl.artifact.ntms
+ntms_app_artifact_id: ntms-application
+#vtms_comm_artifact_id: ep2-server
+ntms_version: 2.1.0-SNAPSHOT
+ntms_root_dir: /opt/ntms
+
+ntms_user: wildfly
+
+#ntms_war_url: https://alpha.novelpay.pl/ntms-rel/NTMS/APP/ntms-application-2.1.0-20190401.114027-44.war
+ntms_war_url: https://repo.artifact.pl/nexus/content/repositories/snapshots/pl/artifact/ntms/ntms-application/2.1.0-SNAPSHOT/ntms-application-2.1.0-20190410.080742-57.war
+
+pg_host: 51.77.198.199
+pg_db: ntms
+pg_user: ntms
+pg_pass: ntms1234#
+
+
+graylog_host: 192.99.119.27
+graylog_port: 12201
+amq_host: 51.77.198.197
+amq_port: 61616
+
+#vtms_cm_package_base_url: https://alpha.novelpay.pl/vtms/cm
+
+#vtms_comm_service: vtms_comm.service
+
+#vtms_id: 00000000000
+#vtms_dbkey: 12121212121212121212121212121212

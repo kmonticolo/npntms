@@ -1,0 +1,61 @@
+---
+
+- name: acreate activemq user
+  user:
+    name: "{{ amq_user }}"
+    comment: Apache ActiveMQ user
+    shell: /bin/bash
+
+- name: get and unpack activemq distribution
+  unarchive:
+    src: '{{ amq_url }}'
+    dest: /opt/
+    validate_certs: false
+    remote_src: yes
+    owner: "{{ amq_user }}"
+    group: "{{ amq_user }}"
+    creates: "/opt/apache-activemq-{{ amq_version }}/README.txt"
+
+- name: symlink /opt/activemq
+  file:
+    dest: "{{ amq_home }}"
+    src: "/opt/apache-activemq-{{ amq_version }}/"
+    state: link
+    owner: "{{ amq_user }}"
+    group: "{{ amq_user }}"
+
+- name: Zatrzymanie uslugi jesli uruchomiona
+  service:
+    name: activemq
+    state: stopped
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+
+- name: ustawienie amq master
+  template:
+    src: activemq.master.xml
+    dest: "{{ amq_home }}/conf/activemq.xml"
+  when: "amq_master"
+
+- name: ustawienie amq slave
+  template:
+    src: activemq.slave.xml
+    dest: "{{ amq_home }}/conf/activemq.xml"
+  when: "not amq_master"
+
+#- name: ustawienia specyficzne master
+#  lineinfile:
+
+
+- name: kopiowanie ustawien uslugi systemd
+  template:
+    src: activemq.service.j2
+    dest: /etc/systemd/system/activemq.service
+
+- name: rejestracja serwisu i uruchomienie uslugi activemq
+  service:
+    name: activemq
+    enabled: yes
+    state: started
+  register: amq_service

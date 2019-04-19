@@ -1,0 +1,10 @@
+---
+
+nginx_ssl_default_domain: novelpay
+nginx_server_name: pntms.novelpay.pl ntms.novelpay.pl
+ntms_backend_address1: 192.99.119.26
+ntms_backend_address2: 51.77.198.196
+ntms_www_root: /opt/ntms/web/html
+nginx_user: www-data
+
+ntms_web_frontend_package_url: https://alpha.novelpay.pl/ntms-rel/NTMS/web.zip

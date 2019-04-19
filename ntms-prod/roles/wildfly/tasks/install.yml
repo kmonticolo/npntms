@@ -1,0 +1,134 @@
+---
+
+- name: Populate service facts
+  service_facts:
+
+- name: create wildfly user
+  user:
+    name: "{{ wildfly_user }}"
+    comment: Wildfly user
+    shell: /bin/bash
+
+- name: get and unpack wildfly distribution
+  unarchive:
+    src: '{{ wildfly_dnld_url }}'
+    dest: /opt/
+    validate_certs: false
+    remote_src: yes
+    owner: "{{ wildfly_user }}"
+    group: "{{ wildfly_user }}"
+    creates: "{{ wildfly_home }}-{{ wildfly_version }}/README.txt"
+
+- name: symlink /opt/wildfly
+  file:
+    dest: "{{ wildfly_home }}"
+    src: "{{ wildfly_home }}-{{ wildfly_version }}/"
+    state: link
+    owner: "{{ wildfly_user }}"
+    group: "{{ wildfly_user }}"
+
+- name: czy sterowniki db sa skonfigurowane
+  command: "grep \"org.postgresql.xa.PGXADataSource\" {{ wildfly_home }}/standalone/configuration/standalone.xml"
+  register: wf_db_dr_check
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+
+
+- name: kopiowanie modulow postgresql i oracle
+  copy:
+    src: "wildfly/modules/{{ item }}/"
+    dest: "{{ wildfly_home }}/modules/system/layers/base/{{ item }}/"
+    owner: "{{ wildfly_user }}"
+    group: "{{ wildfly_user }}"
+  when: wf_db_dr_check.rc != 0
+  with_items:
+    - org/postgresql/main
+    - biz/paluch/logging/main
+
+- name: doanload mod libraties
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ wildfly_home }}/modules/system/layers/base/{{ item.dest }}/"
+    owner: "{{ wildfly_user }}"
+    group: "{{ wildfly_user }}"
+  with_items:
+    - { url: 'http://central.maven.org/maven2/org/apache/commons/commons-pool2/2.4.3/commons-pool2-2.4.3.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/slf4j/jcl-over-slf4j/1.7.25/jcl-over-slf4j-1.7.25.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/redis/clients/jedis/2.9.0/jedis-2.9.0.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/apache/logging/log4j/log4j-1.2-api/2.11.0/log4j-1.2-api-2.11.0.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.11.0/log4j-api-2.11.0.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.11.0/log4j-core-2.11.0.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/2.11.0/log4j-slf4j-impl-2.11.0.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/biz/paluch/logging/logstash-gelf/1.12.1/logstash-gelf-1.12.1.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar', dest: 'biz/paluch/logging/main'}
+    - { url: 'http://central.maven.org/maven2/org/postgresql/postgresql/42.2.5/postgresql-42.2.5.jar', dest: 'org/postgresql/main'}
+
+
+#- name: zmiana wlasciciela i grupy dla katalogow wildfly
+
+- name: katalog konfiguracyjny wildfly
+  file:
+    path: /etc/wildfly/
+    state: directory
+#  when: "'wildfly' not in services"
+
+- name: copy startup stuff
+  copy:
+    src: "/opt/wildfly/docs/contrib/scripts/systemd/{{ item.filename }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    force: no
+    remote_src: yes
+  with_items:
+    - { filename: 'wildfly.conf', dest: '/etc/wildfly/wildfly.conf', mode: '0640', owner: 'root' }
+    - { filename: 'wildfly.service', dest: '/etc/systemd/system/wildfly.service', mode: '0640', owner: 'root' }
+    - { filename: 'launch.sh', dest: '/opt/wildfly/bin/launch.sh', mode: '0755', owner: '{{ wildfly_user }}' }
+#  when: "'wildfly' not in services"
+
+- name: konfiguracja wildfly
+  lineinfile:
+    dest: /etc/systemd/system/wildfly.service
+    regexp: "^(#\\s*)?{{ item.pattern }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { pattern: 'User', line: 'User={{ wildfly_user }}' }
+#  when: "'wildfly' not in services"
+
+- name: memory settings
+  lineinfile:
+    path: "{{ wildfly_home }}/bin/standalone.conf"
+    regexp: "^(.*){{ item.prop }}(\\d+)m(.*)$"
+    line: "\\1{{ item.prop }}{{ item.val }}m\\3"
+    backrefs: yes
+  with_items:
+    - { prop: 'Xms', val: "{{ wildfly_xms }}"}
+    - { prop: 'Xmx', val: "{{ wildfly_xmx }}"}
+
+- name: rejestracja serwisu i uruchomienie uslugi
+  service:
+    name: wildfly
+    enabled: yes
+    state: started
+  register: wildfly_service
+
+- name: kopiowanie konfiguracji sterownikow na serwer
+  copy:
+    src: wildfly/dbdrivers/dbdrivers.cli
+    dest: /tmp/dbdrivers.cli
+  when: wf_db_dr_check.rc != 0
+
+- name: Wait for port 9990 to become open on the host, don't start checking for 10 seconds
+  wait_for:
+    port: 9990
+    delay: 5
+  when: wf_db_dr_check.rc != 0
+
+# najpierw trzeba skopiowac skrypt na serwer
+- name: dodanie driverow oracle i postgresql
+  shell: ./jboss-cli.sh --file=/tmp/dbdrivers.cli
+  args:
+    chdir: "{{ wildfly_home }}/bin"
+  when: wf_db_dr_check.rc != 0

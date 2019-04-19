@@ -1,0 +1,15 @@
+{
+      "global": "true",
+      "title": "syslog",
+      "configuration": {
+        "expand_structured_data": true,
+        "recv_buffer_size": 262144,
+        "port": 1514,
+        "override_source": null,
+        "force_rdns": false,
+        "allow_override_date": true,
+        "bind_address": "0.0.0.0",
+        "store_full_message": true
+      },
+      "type": "org.graylog2.inputs.syslog.udp.SyslogUDPInput"
+}

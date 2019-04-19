@@ -1,0 +1,10 @@
+---
+amq_version: 5.9.1
+amq_url: http://archive.apache.org/dist/activemq/5.9.1/apache-activemq-5.9.1-bin.tar.gz
+amq_mode: standalone
+amq_master: false
+amq_user: amq
+amq_home: /opt/activemq
+amq_master_host: 0.0.0.0
+amq_master_port: 62626
+amq_broker_name: default

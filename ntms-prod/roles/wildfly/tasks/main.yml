@@ -1,0 +1,4 @@
+---
+
+- include_tasks: install.yml
+  when: "'wildfly' in group_names"

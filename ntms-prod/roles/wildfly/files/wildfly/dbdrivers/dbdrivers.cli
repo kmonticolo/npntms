@@ -1,0 +1,4 @@
+connect 127.0.0.1
+batch
+/subsystem=datasources/jdbc-driver=org.postgresql:add(driver-name=org.postgresql,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+run-batch

@@ -1,0 +1,4 @@
+connect 127.0.0.1
+batch
+/subsystem=datasources/data-source=ntmsDS:add(jta=true,jndi-name=java:jboss/datasources/ntmsDS, driver-name=org.postgresql, connection-url=jdbc:postgresql://{{ pg_host }}:5432/{{ pg_db }}, background-validation=true, enabled=true, flush-strategy=FailingConnectionOnly, initial-pool-size=10, jta=true, max-pool-size=50, min-pool-size=10, password={{ pg_pass }}, pool-prefill=false, pool-use-strict-min=false, prepared-statements-cache-size=30, share-prepared-statements=true, statistics-enabled=true, use-ccm=true, use-java-context=true, user-name={{ pg_user }}, validate-on-match=true, check-valid-connection-sql=SELECT 1) 
+run-batch

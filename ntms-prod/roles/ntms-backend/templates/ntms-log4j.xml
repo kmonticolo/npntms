@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <!-- CONSOLE APPENDER -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} | %m%n"/>
+        </Console>
+        <RollingFile name="fileLog" fileName="{{ ntms_root_dir }}/logs/ntms.log"
+                     filePattern="{{ ntms_root_dir }}/logs/ntms-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="debugLog" fileName="{{ ntms_root_dir }}/logs/debug.log"
+                     filePattern="{{ ntms_root_dir }}/logs/debug-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="secLog" fileName="{{ ntms_root_dir }}/logs/sec.log"
+                     filePattern="{{ ntms_root_dir }}/logs/sec-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="100">
+                <Delete basePath="$/opt/jboss-eap-6.3/sc-logs" maxDepth="2">
+                    <IfFileName glob="*/sc-*.log.gz">
+                        <IfLastModified age="14d">
+                            <IfAny>
+                                <IfAccumulatedFileSize exceeds="1 GB"/>
+                            </IfAny>
+                        </IfLastModified>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <RollingFile name="transLog" fileName="{{ ntms_root_dir }}/logs/trans.log"
+                     filePattern="{{ ntms_root_dir }}/logs/trans-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="sqlLog" fileName="{{ ntms_root_dir }}/logs/sql.log"
+                     filePattern="{{ ntms_root_dir }}/logs/sql-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <ContextMapFilter onMatch="DENY" onMismatch="NEUTRAL" operator="or">
+                <KeyValuePair key="sqlOperationType" value="SELECT"/>
+            </ContextMapFilter>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="java.sql" level="WARN" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+        </Logger>
+        <Logger name="pl.artifact.ntms.services.persistance" level="DEBUG" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+        </Logger>
+        <Logger name="org.mybatis.spring" level="INFO" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+        </Logger>
+        <Logger name="pl.artifact.ntms.services.auth" level="INFO" additivity="false">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="pl.artifact" level="DEBUG" additivity="false">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="org.springframework.orm.jpa" level="INFO" additivity="false">
+            <AppenderRef ref="transLog"/>
+        </Logger>
+        <Logger name="org.springframework.transaction" level="DEBUG" additivity="false">
+            <AppenderRef ref="transLog"/>
+        </Logger>
+        <Logger name="org.springframework" level="DEBUG" additivity="false">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="com.ibatis.common.jdbc" level="WARN" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+        </Logger>
+        <Logger name="org.quartz" level="WARN" additivity="false">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="org.apache.log4j" level="ERROR">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="org.apache.commons" level="WARN">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="org.apache.activemq" level="WARN">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="org.springframework.web.servlet.mvc.method.annotation" level="WARN">
+            <AppenderRef ref="fileLog"/>
+        </Logger>
+        <Logger name="org.springframework.security" level="TRACE">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Root level="DEBUG">
+            <AppenderRef ref="fileLog"/>
+        </Root>
+    </Loggers>
+</Configuration>

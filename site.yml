@@ -1,31 +1,4 @@
 ---
-- name: bootstrap
-  hosts: npntms
-  gather_facts: false
-  roles: 
-  - { role: robertdebock.bootstrap, tags: bootstrap }
-
-- name: set hostname
-  hosts: npntms
-  roles: 
-  - { role: anxs.hostname, tags: hostname }
-
-- name: set password adam
-  hosts: npntms
-  tasks:
-  - user:
-      name: adam
-      password: $6$1FR4d4zj$6LgmXa9yavJbY5iohV5exWrv183QYiE4zcAKCBf239E06yA5S0mKJnuRFipdhadkah.g8vxYMcQarRtizu/.50
-  tags: user
-
-- name: preserve hostnames in cloudinit
-  hosts: npntms
-  tasks:
-  - lineinfile: 
-      dest: /etc/cloud/cloud.cfg
-      regexp: '^preserve_hostname'
-      line: 'preserve_hostname: true'
-      state: present
 
 - name: set up LVM
   hosts: npntms
@@ -91,7 +64,7 @@
         from_ip: 51.77.198.196/28
 
 - name: ufw | Allow all traffic between hosts and sites
-  hosts: npntmsamq, npntmswildfly, npntmsdb
+  hosts: npntmsamq, npntmswildfly, postgresql
   roles:
     - oefenweb.ufw
   vars:
@@ -105,7 +78,7 @@
         protocol: tcp
 
 - name: install Postgresql
-  hosts: npntmsdb
+  hosts: postgresql
   become: yes
   vars_files:
     - vars/npntmsdb2.yml

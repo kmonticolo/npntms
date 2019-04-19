@@ -1,0 +1,6 @@
+---
+- hosts: npntmsfront
+  roles:
+    - dev-sec.nginx-hardening
+  vars: 
+  - nginx_limit_conn: "default 200"

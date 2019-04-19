@@ -1,0 +1,24 @@
+# proxmox 1 (db replica)
+node: ns525819
+apihost: ns525819.ip-142-4-215.net
+vm:
+  front1:
+    id: 101
+    mac: 02:00:00:79:0a:24
+    cores: 2
+    memory: 2048
+  amq1:
+    id: 102
+    mac: 02:00:00:33:04:27
+    cores: 2
+    memory: 2048
+  wf1:
+    id: 103
+    mac: 02:00:00:7b:ba:40
+    cores: 2
+    memory: 4096
+  db1:
+    id: 104
+    mac: 02:00:00:d4:d4:93
+    cores: 4
+    memory: 6200

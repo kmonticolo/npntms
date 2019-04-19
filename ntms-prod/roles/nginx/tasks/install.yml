@@ -1,0 +1,67 @@
+---
+- name: instalacja nginx dla webserwerow
+  apt:
+    name: nginx
+    update_cache: yes
+
+- name: stworzenie katalogow www root dla ntms
+  file:
+    path: "{{ ntms_www_root }}"
+    state: directory
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+
+- name: get and unpack web distribution
+  unarchive:
+    src: '{{ ntms_web_frontend_package_url }}'
+    dest: "{{ ntms_www_root }}/"
+    validate_certs: false
+    remote_src: yes
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    creates: "{{ ntms_www_root }}/main.43a578fd323d5179d948.js"
+
+- name: konfiguracja apiUrl
+  template:
+    src: apiUrl.json
+    dest: "{{ ntms_www_root }}/assets/apiUrl/apiUrl.json"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+
+- name: kopiowanie certyfikatow ssl
+  copy:
+    src: "ssl/"
+    dest: "/etc/nginx/ssl/"
+
+- name: konfiguracja domyslnej konfiguracji
+  template:
+    src: "{{ item }}"
+    dest: /etc/nginx/sites-available
+    owner: root
+    group: root
+  with_items:
+    - default
+    - default-ssl
+    - ntms
+    - pntms
+    - ntms-terminal
+    - graylog
+  notify:
+    - restart nginx
+
+- name: konfiguracja domyslnej konfiguracji - symlink
+  file:
+    dest: /etc/nginx/sites-enabled/{{ item }}
+    src: "/etc/nginx/sites-available/{{ item }}"
+    state: link
+    owner: root
+    group: root
+  with_items:
+    - default
+    - default-ssl
+    - ntms
+    - pntms
+    - ntms-terminal
+    - graylog
+  notify:
+    - restart nginx

@@ -1,0 +1,89 @@
+---
+
+- name: czy datasource jest skonfigurowane
+  command: "grep \\\"ntmsDS\\\" {{ wildfly_home }}/standalone/configuration/standalone.xml"
+  register: ntms_ds_check
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+  tags:
+    - ntms
+
+- name: stworzenie katalogów ntms
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ntms_user }}"
+    group: "{{ ntms_user }}"
+  with_items:
+    - /etc/ntms
+    - "{{ ntms_root_dir }}/data/tmp/"
+    - "{{ ntms_root_dir }}/configuration/"
+    - "{{ ntms_root_dir }}/logs/"
+    - "{{ wildfly_home }}/cliscripts/"
+  tags:
+    - ntms
+
+- name: skopiowanie plikow konfiguracyjnych
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ ntms_user }}"
+    group: "{{ ntms_user }}"
+  with_items:
+    - { src: 'ntms-datasource.cli', dest: '{{ wildfly_home }}/cliscripts/ntms-datasource.cli'}
+    - { src: 'ntms.properties', dest: '{{ wildfly_home }}/standalone/configuration/ntms.properties'}
+    - { src: 'ntms-log4j.xml', dest: '{{ ntms_root_dir }}/configuration/'}
+    - { src: 'ntms-log4j-gelf.xml', dest: '{{ ntms_root_dir }}/configuration/'}
+  tags:
+    - ntms
+
+- name: restart wildfly
+  service:
+    name: wildfly
+    state: restarted
+  tags:
+    - ntms
+
+- name: konfiguracja datasourca dla ntms
+  become_user: "{{ ntms_user }}"
+  shell: "./jboss-cli.sh --file={{ wildfly_home }}/cliscripts/ntms-datasource.cli"
+  args:
+    chdir: /opt/wildfly/bin
+  when: ntms_ds_check.rc != 0
+  tags:
+    - ntms
+
+- name: download ntms application
+  get_url:
+    url: "{{ ntms_war_url }}"
+    validate_certs: false
+    dest: /tmp/ntms-application.war
+  when: ntms_app_check.stat.exists == False
+  tags:
+    - ntms
+
+- name: restart wildfly
+  service:
+    name: wildfly
+    state: stopped
+  tags:
+    - ntms
+
+- name: skopiowanie ntms do deploymentu
+  copy:
+    src: /tmp/ntms-application.war
+    dest: "{{ wildfly_home }}/standalone/deployments/"
+    owner: "{{ ntms_user }}"
+    group: "{{ ntms_user }}"
+    remote_src: yes
+  when: ntms_app_check.stat.exists == False
+#  tags:
+#    - ntms
+
+- name: restart wildfly
+  service:
+    name: wildfly
+    state: started
+  tags:
+    - ntms

@@ -1,0 +1,130 @@
+---
+
+- name: dodanie klucza repo elasticsearch
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  tags:
+    - graylog
+
+- name: dodanie klucza repo mongo
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+  tags:
+    - graylog
+
+
+- name: dodanie repo mongodb do apt
+  apt_repository:
+    repo: deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse
+    state: present
+    filename: mongodb
+  tags:
+    - graylog
+
+- name: dodanie repo elasticsearch do apt
+  apt_repository:
+    repo: deb https://packages.elastic.co/elasticsearch/2.x/debian stable main
+    state: present
+    filename: elasticsearch-2.x
+  tags:
+    - graylog
+
+- name: instalacja repozytorium graylog
+  apt:
+    deb: https://packages.graylog2.org/repo/packages/graylog-2.5-repository_latest.deb
+  tags:
+    - graylog
+
+
+- name: instalacja mongodb
+  package:
+    name: mongodb-org
+    update_cache: yes
+  tags:
+    - graylog
+
+- name: instalacja elasticsearch
+  package:
+    name: elasticsearch
+    update_cache: yes
+  tags:
+    - graylog
+
+- name: instalacja graylog
+  package:
+    name: graylog-server
+    update_cache: yes
+  register: graylog_inst
+  tags:
+    - graylog
+
+- name: konfiguracja elasticsearch
+  lineinfile:
+    dest: /etc/elasticsearch/elasticsearch.yml
+    regexp: "^(#\\s*)?{{ item.pattern }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { pattern: 'cluster.name', line: 'cluster.name: graylog' }
+  tags:
+    - graylog
+
+
+- name: konfiguracja graylog
+  lineinfile:
+    dest: /etc/graylog/server/server.conf
+    regexp: "^(#\\s*)?{{ item.pattern }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { pattern: 'root_password_sha2', line: 'root_password_sha2 = {{ graylog_root_password_sha2 }}' }
+    - { pattern: 'password_secret', line: 'password_secret = {{ graylog_password_secret }}' }
+    - { pattern: 'rest_listen_uri', line: 'rest_listen_uri = http://{{ graylog_ip_addr }}:9000/api/' }
+    - { pattern: 'web_listen_uri', line: 'web_listen_uri = http://{{ graylog_ip_addr }}:9000/' }
+  register: graylog_conf
+  notify:
+    - restart graylog
+  tags:
+    - graylog
+
+
+- name: wlaczenie uslug
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - mongod
+    - elasticsearch
+    - graylog-server
+  tags:
+    - graylog
+
+- name: Wait for port 9000 to become open on the host, don't start checking for 10 seconds
+  wait_for:
+    host: "{{ graylog_ip_addr }}"
+    port: 9000
+    delay: 10
+
+
+- name: konfiguracja zrogla gelf
+  uri:
+    url: "{{ graylog_url }}/api/system/inputs"
+    method: POST
+    body: "{{ lookup('file','graylog_gelf.json') }}"
+    body_format: json
+    headers:
+      X-Requested-By: admin
+    status_code: 201
+  when: graylog_inst.changed
+
+- name: konfiguracja zrogla syslog
+  uri:
+    url: "{{ graylog_url }}/api/system/inputs"
+    method: POST
+    body: "{{ lookup('file','graylog_syslog.json') }}"
+    body_format: json
+    headers:
+      X-Requested-By: admin
+    status_code: 201
+  when: graylog_inst.changed

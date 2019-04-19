@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <!-- CONSOLE APPENDER -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} | %m%n"/>
+        </Console>
+        <Gelf name="fileGelf" host="udp:{{ graylog_host }}" port="{{ graylog_port }}" version="1.0" extractStackTrace="true"
+              filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192"
+              originHost="beryl.artifact.pl" additionalFieldTypes="app=String,MARKER=String"
+              ignoreExceptions="true">
+                <Filters>
+                        <ContextMapFilter onMatch="DENY" onMismatch="NEUTRAL" operator="or">
+                                <KeyValuePair key="sqlOperationType" value="SELECT"/>
+                        </ContextMapFilter>
+                </Filters>
+
+                <Field name="timestamp" pattern="%d{dd MMM yyyy HH:mm:ss,SSS}" />
+                <Field name="level" pattern="%level" />
+                <Field name="simpleClassName" pattern="%C{1}" />
+                <Field name="className" pattern="%C" />
+                <Field name="server" pattern="%host{address}" />
+                <Field name="server.fqdn" pattern="%host{fqdn}" />
+                <Field name="process_id" pattern="%t" />
+                <Field name="app" literal="NTMS" />
+                <Field name="MARKER" literal="COMMON" />
+                <DynamicMdcFields regex="mdc.*" />
+                <DynamicMdcFields regex="(mdc|MDC)fields" />
+        </Gelf>
+        <Gelf name="sqlGelf" host="udp:{{ graylog_host }}" port="{{ graylog_port }}" version="1.0" extractStackTrace="true"
+              filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192"
+              originHost="beryl.artifact.pl" additionalFieldTypes="app=String,MARKER=String"
+              ignoreExceptions="true">
+                <Filters>
+                        <ContextMapFilter onMatch="DENY" onMismatch="NEUTRAL" operator="or">
+                                <KeyValuePair key="sqlOperationType" value="SELECT"/>
+                        </ContextMapFilter>
+                </Filters>
+
+                <Field name="timestamp" pattern="%d{dd MMM yyyy HH:mm:ss,SSS}" />
+                <Field name="level" pattern="%level" />
+                <Field name="simpleClassName" pattern="%C{1}" />
+                <Field name="className" pattern="%C" />
+                <Field name="server" pattern="%host{address}" />
+                <Field name="server.fqdn" pattern="%host{fqdn}" />
+                <Field name="process_id" pattern="%t" />
+                <Field name="app" literal="NTMS" />
+                <Field name="MARKER" literal="SQL" />
+                <DynamicMdcFields regex="mdc.*" />
+                <DynamicMdcFields regex="(mdc|MDC)fields" />
+        </Gelf>
+        <Gelf name="guiGelf" host="udp:{{ graylog_host }}" port="{{ graylog_port }}" version="1.0" extractStackTrace="true"
+              filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192"
+              originHost="beryl.artifact.pl" additionalFieldTypes="app=String,MARKER=String"
+              ignoreExceptions="true">
+                <Filters>
+                        <ContextMapFilter onMatch="DENY" onMismatch="NEUTRAL" operator="or">
+                                <KeyValuePair key="sqlOperationType" value="SELECT"/>
+                        </ContextMapFilter>
+                </Filters>
+
+                <Field name="timestamp" pattern="%d{dd MMM yyyy HH:mm:ss,SSS}" />
+                <Field name="level" pattern="%level" />
+                <Field name="simpleClassName" pattern="%C{1}" />
+                <Field name="className" pattern="%C" />
+                <Field name="server" pattern="%host{address}" />
+                <Field name="server.fqdn" pattern="%host{fqdn}" />
+                <Field name="process_id" pattern="%t" />
+                <Field name="app" literal="NTMS" />
+                <Field name="MARKER" literal="GUI" />
+                <DynamicMdcFields regex="mdc.*" />
+                <DynamicMdcFields regex="(mdc|MDC)fields" />
+        </Gelf>
+        <RollingFile name="fileLog" fileName="{{ ntms_root_dir }}/logs/ntms.log"
+                     filePattern="{{ ntms_root_dir }}/logs/ntms-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="sqlLog" fileName="{{ ntms_root_dir }}/logs/sql.log"
+                     filePattern="{{ ntms_root_dir }}/logs/sql-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <ContextMapFilter onMatch="DENY" onMismatch="NEUTRAL" operator="or">
+                <KeyValuePair key="sqlOperationType" value="SELECT"/>
+            </ContextMapFilter>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="guiLog" fileName="{{ ntms_root_dir }}/logs/gui.log"
+                     filePattern="{{ ntms_root_dir }}/logs/gui-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}] (%t:%X{USR}) %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="java.sql" level="WARN" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+            <AppenderRef ref="sqlGelf"/>
+        </Logger>
+        <Logger name="pl.artifact.ntms.dao.persistance" level="DEBUG" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+            <AppenderRef ref="sqlGelf"/>
+        </Logger>
+        <Logger name="org.mybatis.spring" level="INFO" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+            <AppenderRef ref="sqlGelf"/>
+        </Logger>
+        <Logger name="com.ibatis.common.jdbc" level="WARN" additivity="false">
+            <AppenderRef ref="sqlLog"/>
+            <AppenderRef ref="sqlGelf"/>
+        </Logger>
+        <Logger name="org.apache.activemq" level="WARN" additivity="false">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="pl.artifact" level="DEBUG" additivity="false">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="org.apache.log4j" level="ERROR">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="org.apache.commons" level="WARN">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="org.springframework.web.servlet.mvc.method.annotation" level="WARN">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="org.springframework.security" level="INFO">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="org.apache.camel.spring" level="INFO">
+                <AppenderRef ref="fileLog"/>
+                <AppenderRef ref="fileGelf"/>
+        </Logger>
+        <Logger name="pl.artifact.ntms.services.rest.GuiLogController" level="INFO">
+                <AppenderRef ref="guiLog"/>
+                <AppenderRef ref="guiGelf"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="fileLog"/>
+            <AppenderRef ref="fileGelf"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,12 @@
+all:
+  children:
+    postgresql:
+      children:
+        postgresql-master:
+          hosts:
+            db2:
+              ansible_host: 51.77.198.199 
+        postgresql-replicas:
+          hosts:
+            db1:
+              ansible_host: 192.99.119.27

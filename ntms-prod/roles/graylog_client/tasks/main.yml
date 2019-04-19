@@ -1,0 +1,16 @@
+---
+
+
+
+- name: ustawienia logowania do graylog
+  template:
+    src: 90-graylog2.conf
+    dest: /etc/rsyslog.d/90-graylog2.conf
+    owner: root
+    group: root
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  notify:
+    - restart rsylog
+
+#- name: restart rsylog
+#  service: name=rsyslog state=restarted
