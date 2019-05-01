@@ -1,6 +1,6 @@
 ---
 
-- name: acreate activemq user
+- name: Create activemq user
   user:
     name: "{{ amq_user }}"
     comment: Apache ActiveMQ user
