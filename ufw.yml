@@ -32,6 +32,11 @@
         from_ip: 192.99.119.24/28
       - rule: allow
         from_ip: 51.77.198.196/28
+      # zabbix
+      - rule: allow
+        to_port: 10050
+        protocol: tcp
+        from_ip: 164.132.63.48
 
 - name: ufw | Allow all traffic between hosts and sites
   hosts: npntmsamq, npntmswildfly, postgresql
@@ -47,6 +52,12 @@
       - rule: allow
         to_port: 22
         protocol: tcp
+      # zabbix
+      - rule: allow
+        to_port: 10050
+        protocol: tcp
+        from_ip: 164.132.63.48
+
 
 - name: ufw | Allow old ntms traffic
   hosts: wf2.novelpay.pl
