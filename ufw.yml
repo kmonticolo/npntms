@@ -1,5 +1,6 @@
 - name: ufw | Allow http/s incoming port on frontend
   hosts: npntmsfront
+  become: yes
   gather_facts: true
   roles:
     - oefenweb.ufw
@@ -15,6 +16,47 @@
         to_port: 4747
         protocol: tcp
       - rule: allow
+        from_ip: 94.172.188.152/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 79.189.18.141/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 178.235.208.85/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 80.211.116.113/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 64.132.30.190/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 167.114.54.63/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 178.235.208.85/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 37.47.32.210/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 5.184.1.126/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 78.3.53.3/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 79.184.36.177/24
         to_port: 22
         protocol: tcp
       # terminale
@@ -50,6 +92,47 @@
       - rule: allow
         from_ip: 51.77.198.196/28
       - rule: allow
+        from_ip: 64.132.30.190/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 167.114.54.63/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 178.235.208.85/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 37.47.32.210/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 5.184.1.126/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 78.3.53.3/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 79.184.36.177/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 94.172.188.152/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 79.189.18.141/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 178.235.208.85/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 80.211.116.113/24
         to_port: 22
         protocol: tcp
       # zabbix
@@ -70,6 +153,47 @@
       - rule: allow
         from_ip: 51.77.198.196/28
       - rule: allow
+        from_ip: 64.132.30.190/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 167.114.54.63/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 178.235.208.85/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 37.47.32.210/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 5.184.1.126/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 78.3.53.3/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 79.184.36.177/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 94.172.188.152/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 79.189.18.141/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 178.235.208.85/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 80.211.116.113/24
         to_port: 22
         protocol: tcp
 # allow old ntms traffic
