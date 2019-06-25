@@ -1,8 +1,18 @@
 ---
-- hosts: npntms
+- hosts: npntms:!npntmswildfly
   become: yes
   vars: 
     swap_file_size_mb: '1024'
+
+  roles:
+     - geerlingguy.swap
+
+- hosts: npntmswildfly
+  become: yes
+  vars: 
+    swap_file_size_mb: '3072'
+    swap_file_state: present
+    #swap_file_state: absent
 
   roles:
      - geerlingguy.swap
