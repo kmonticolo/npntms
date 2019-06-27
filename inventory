@@ -58,10 +58,10 @@ wf[1:2].novelpay.pl
 
 [postgresql]
 [postgresql:children]
-postgresql-master
-postgresql-replicas
+postgresql_master
+postgresql_replicas
 
-[postgresql-master]
+[postgresql_master]
 db2.novelpay.pl ansible_ssh_host=51.77.198.199
-[postgresql-replicas]
+[postgresql_replicas]
 db1.novelpay.pl ansible_ssh_host=192.99.119.27
