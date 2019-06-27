@@ -64,7 +64,7 @@
         from_ip: 51.77.198.196/28
 
 - name: ufw | Allow all traffic between hosts and sites
-  hosts: npntmsamq, npntmswildfly, postgresql
+  hosts: npntms:!npntmsfront
   roles:
     - oefenweb.ufw
   vars:
