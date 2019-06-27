@@ -17,7 +17,7 @@
     postgresql_replication__password: "r3pl1c6t0r"
 
   roles:
-    - role: 'enix.postgresql_replication'
+    - role: 'kmonticolo.postgresql_replication'
       postgresql__version: 10
       postgresql__global_config_options:
         - option: listen_addresses
