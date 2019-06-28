@@ -24,10 +24,6 @@
         to_port: 22
         protocol: tcp
       - rule: allow
-        from_ip: 178.235.208.85/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
         from_ip: 80.211.116.113/24
         to_port: 22
         protocol: tcp
@@ -105,10 +101,6 @@
         to_port: 22
         protocol: tcp
       - rule: allow
-        from_ip: 178.235.208.85/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
         from_ip: 37.47.32.210/24
         to_port: 22
         protocol: tcp
@@ -149,74 +141,8 @@
         to_port: 10050
         protocol: tcp
         from_ip: 164.132.63.48
-
-- name: ufw | Allow old ntms traffic
-  hosts: wf2.novelpay.pl
-  become: yes
-  gather_facts: true
-  roles:
-    - oefenweb.ufw
-  vars:
-    ufw_rules:
-      - rule: allow
-        from_ip: 192.99.119.24/28
-      - rule: allow
-        from_ip: 51.77.198.196/28
-      - rule: allow
-        from_ip: 64.132.30.190/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 167.114.54.63/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 178.235.208.85/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 37.47.32.210/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 5.184.1.126/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 78.3.53.3/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 79.184.36.177/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 94.172.188.152/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 79.189.18.141/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 178.235.208.85/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 80.211.116.113/24
-        to_port: 22
-        protocol: tcp
-      - rule: allow
-        from_ip: 46.105.232.2 # alpha
-        to_port: 22
-        protocol: tcp
 # allow old ntms traffic
       - rule: allow
         from_ip: 178.32.205.89/32
         to_port: 8080
         protocol: tcp
-      # zabbix
-      - rule: allow
-        to_port: 10050
-        protocol: tcp
-        from_ip: 164.132.63.48
