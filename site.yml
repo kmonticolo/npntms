@@ -2,6 +2,7 @@
 
 - name: set up LVM
   hosts: npntms
+  become: True
   tasks:
   - lvol: 
       vg: ubuntu-vg
@@ -11,6 +12,7 @@
 
 - name: apt upgrade
   hosts: npntms
+  become: True
   tasks:
    - name: updates a server
      apt: update_cache=yes
@@ -27,7 +29,7 @@
 
 - name: NTP setup
   hosts: npntms
-  become: yes
+  become: True
   roles:
     - geerlingguy.ntp
   tags: ntp
@@ -42,6 +44,7 @@
 # frontend
 - name: ufw | Allow http/s incoming port on frontend
   hosts: npntmsfront
+  become: True
   roles:
     - oefenweb.ufw
   vars:
@@ -65,6 +68,7 @@
 
 - name: ufw | Allow all traffic between hosts and sites
   hosts: npntms:!npntmsfront
+  become: True
   roles:
     - oefenweb.ufw
   vars:
@@ -79,7 +83,7 @@
 
 - name: install Postgresql
   hosts: postgresql
-  become: yes
+  become: True
   vars_files:
     - vars/npntmsdb2.yml
   roles:
