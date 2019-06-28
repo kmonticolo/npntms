@@ -206,6 +206,10 @@
         from_ip: 80.211.116.113/24
         to_port: 22
         protocol: tcp
+      - rule: allow
+        from_ip: 46.105.232.2 # alpha
+        to_port: 22
+        protocol: tcp
 # allow old ntms traffic
       - rule: allow
         from_ip: 178.32.205.89/32
