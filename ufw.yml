@@ -86,6 +86,7 @@
 
 - name: ufw | Allow all traffic between hosts and sites
   hosts: npntmsamq, npntmswildfly, postgresql
+  become: yes
   gather_facts: true
   roles:
     - oefenweb.ufw
@@ -151,6 +152,7 @@
 
 - name: ufw | Allow old ntms traffic
   hosts: wf2.novelpay.pl
+  become: yes
   gather_facts: true
   roles:
     - oefenweb.ufw
