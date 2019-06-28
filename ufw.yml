@@ -59,6 +59,10 @@
         from_ip: 79.184.36.177/24
         to_port: 22
         protocol: tcp
+      - rule: allow
+        from_ip: 46.105.232.2 # alpha
+        to_port: 22
+        protocol: tcp
       # terminale
       - rule: allow
         to_port: 8443
@@ -133,6 +137,10 @@
         protocol: tcp
       - rule: allow
         from_ip: 80.211.116.113/24
+        to_port: 22
+        protocol: tcp
+      - rule: allow
+        from_ip: 46.105.232.2 # alpha
         to_port: 22
         protocol: tcp
       # zabbix
