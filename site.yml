@@ -30,6 +30,8 @@
 - name: NTP setup
   hosts: npntms
   become: True
+  vars: 
+    ntp_timezone: Europe/Warsaw
   roles:
     - geerlingguy.ntp
   tags: ntp
