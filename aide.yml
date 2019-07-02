@@ -1,0 +1,173 @@
+- hosts: all
+  become: yes
+  vars:
+    #aide_cron_sched_hr: 12
+    aide_cron_schedule_check: false # we run job from jenkins
+    aide_verbose: 3
+
+    aide_rules:
+
+      - name: "FIPSR"
+        rule: "FIPSR"
+        attributes: [p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256]
+
+      - name: "ALLXTRAHASHES"
+        rule: "ALLXTRAHASHES"
+        attributes: [sha1+rmd160+sha256+sha512+tiger]
+
+      - name: "EVERYTHING"
+        rule: "EVERYTHING"
+        attributes: [R+ALLXTRAHASHES]
+
+      - name: "define include path"
+        rule: "NORMAL"
+        attributes: [FIPSR+sha512]
+        paths:
+           - "/boot"
+           - "/bin"
+           - "/sbin"
+           - "/lib"
+           - "/lib64"
+           - "/opt"
+           - "/usr"
+           - "/root"
+           - "/etc/exports"
+           - "/etc/fstab"
+           - "/etc/aide.conf"
+           - "/etc/passwd"
+           - "/etc/group"
+           - "/etc/gshadow"
+           - "/etc/shadow"
+           - "/etc/security/opasswd"
+           - "/etc/hosts.allow"
+           - "/etc/hosts.deny"
+           - "/etc/sudoers"
+           - "/etc/skel"
+           - "/etc/logrotate.d"
+           - "/etc/nscd.conf"
+           - "/etc/securetty"
+           - "/etc/profile"
+           - "/etc/bashrc"
+           - "/etc/bash_completion.d/"
+           - "/etc/login.defs"
+           - "/etc/zprofile"
+           - "/etc/zshrc"
+           - "/etc/zlogin"
+           - "/etc/zlogout"
+           - "/etc/profile.d/"
+           - "/etc/X11/"
+           - "/etc/yum.conf"
+           - "/etc/yumex.conf"
+           - "/etc/yumex.profiles.conf"
+           - "/etc/yum"
+           - "/etc/yum.repos.d/"
+
+      - name: "perms"
+        rule: "PERMS"
+        attributes: [p+i+u+g+acl+selinux]
+        paths:
+           - "/etc"
+
+      - name: "lspp"
+        rule: "LSPP"
+        attributes: [FIPSR+sha512]
+        paths:
+           - "/etc/audit/"
+           - "/etc/nginx/"
+           - "/etc/libaudit.conf"
+           - "/usr/sbin/stunnel"
+           - "/var/spool/at"
+           - "/etc/at.allow"
+           - "/etc/at.deny"
+           - "/etc/cron.allow"
+           - "/etc/cron.deny"
+           - "/etc/cron.d/"
+           - "/etc/cron.daily/"
+           - "/etc/cron.hourly/"
+           - "/etc/cron.monthly/"
+           - "/etc/cron.weekly/"
+           - "/etc/crontab"
+           - "/var/spool/cron/root"
+           - "/etc/login.defs"
+           - "/etc/securetty"
+           - "/var/log/faillog"
+           - "/var/log/lastlog"
+           - "/etc/hosts"
+           - "/etc/sysconfig"
+           - "/etc/inittab"
+           - "/etc/grub"
+           - "/etc/rc.d"
+           - "/etc/ld.so.conf"
+           - "/etc/localtime"
+           - "/etc/sysctl.conf"
+           - "/etc/modprobe.conf"
+           - "/etc/pam.d"
+           - "/etc/security"
+           - "/etc/aliases"
+           - "/etc/postfix"
+           - "/etc/ssh/sshd_config"
+           - "/etc/ssh/ssh_config"
+           - "/etc/stunnel"
+           - "/etc/vsftpd.ftpusers"
+           - "/etc/vsftpd"
+           - "/etc/issue"
+           - "/etc/issue.net"
+           - "/etc/cups"
+
+      - name: "dataonly"
+        rule: "DATAONLY"
+        attributes: [p+n+u+g+s+acl+selinux+xattrs+sha256]
+        paths:
+           - "/etc/resolv.conf"
+
+      - name: "log"
+        rule: "LOG"
+        attributes: [p+u+g+i+n+S+acl+selinux+xattrs]
+        paths:
+           - "/root/.bash_history"
+           - "/var/log/syslog*"
+           - "/var/run/utmp"
+           - "/var/log/lastlog"
+           - "/var/log/auth.log.*"
+           - "/var/log/kern.log.*"
+           - "/var/log/syslog.*"
+           - "/opt/apache-activemq-5.9.1/data/activemq.log*"   # amq
+           - "/opt/apache-activemq-5.9.1/data/kahadb/db-5.log*" # amq
+           - "/opt/ntms/logs/ntms.log.*" # wildfly
+           - "/opt/ntms/logs/sql.log" # wildfly
+           - "/opt/ntms/logs"
+
+           - "/opt/wildfly-15.0.0.Final/standalone/log/*"
+           - "/var/log/postgresql/postgresql-10-main.log.*" # postgresql
+           - "/var/log/nginx/"
+           - "/var/log/nginx/access.*"
+           - "/var/log/nginx/error.*"
+           - "/var/log/nginx/ntms_access.log.*"
+           - "/var/log/nginx/ntms_error.*"
+           - "/var/log/nginx/ntms_term_access.*"
+           - "/var/log/nginx/ntms_term_error.*"
+           - "/opt/ntms/logs/sql.log"
+           - "/opt/wildfly-15.0.0.Final/standalone/log"
+           - "/opt/wildfly-15.0.0.Final/standalone/log/server.log"
+ 
+
+      - name: "exclude"
+        rule: "negative"
+        paths:
+           - "/etc/.git/.*"
+           - "/root/.viminfo"
+           - "/var/log/lastlog"
+           - "/opt/apache-activemq-5.9.1/data" # amq
+           - "/opt/apache-activemq-5.9.1/tmp" # amq
+           # wf
+           - "/opt/ntms/data/p/stored_files"
+           - "/opt/ntms/data/t/appVersions/*"
+           - "/opt/ntms/data/t/appVersions/*"
+           - "/opt/ntms/data/t/appVersionsTmp"
+           - "/opt/wildfly-15.0.0.Final/standalone/tmp/*"
+           - "/opt/ntms/data/t/parameterTmp/*"
+           - "/opt/ntms/data/t/export"
+           - "/opt/ntms/data/t/upload"
+
+  roles:
+    - kmonticolo.ansible_aide
