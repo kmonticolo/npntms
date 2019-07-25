@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: npntms
   become: yes
   vars:
     #aide_cron_sched_hr: 12
@@ -168,6 +168,7 @@
            - "/opt/ntms/data/t/parameterTmp/*"
            - "/opt/ntms/data/t/export"
            - "/opt/ntms/data/t/upload"
+           - "/opt/ntms/data/t/notifications/"
 
   roles:
     - kmonticolo.ansible_aide
