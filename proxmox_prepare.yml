@@ -3,12 +3,17 @@
   hosts: 'npproxmox'
   gather_facts: false
   vars:
+    ansible_python_interpreter: /usr/bin/python
     packages:
       - 'python-pip'
       - 'python-dev'
       - 'build-essential'
 
   tasks:
+    - name: 'remove enterprise repo file'
+      file:
+        path: /etc/apt/sources.list.d/pve-enterprise.list
+        state: absent
     - name: 'install python-apt so native apt plugins work'
       package:
         name: 'python-apt'
