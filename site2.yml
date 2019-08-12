@@ -7,13 +7,14 @@
 #    raw:  sed -i 's/APT::Periodic::Update-Package-Lists "1"\;/APT::Periodic::Update-Package-Lists "0"\;/' /etc/apt/apt.conf.d/20auto-upgrades
 
 - name: bootstrap
-  hosts: npntms
+  hosts: npntms,ppos2
   gather_facts: false
   roles:
     - { role: robertdebock.bootstrap, bootstrap_retries: 30, tags: bootstrap }
     - { role: anxs.hostname, tags: hostname }
     - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
     - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
+    - { role: "nickjj.user", tags: "mratkiewicz", user_name: "mratkiewicz", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/mratkiewicz_id_rsa.pub" }
     - { role: geerlingguy.ntp, tags: ntp }
     - { role: ansible-ipv6, tags: ipv6 }
 
@@ -33,7 +34,8 @@
   tags: nginxharden
 
 - name: preserve hostname
-  hosts: npntms
+  #hosts: npntms
+  hosts: npntms,ppos2
   tasks:
   - name: set preserve_hostname
     lineinfile:
