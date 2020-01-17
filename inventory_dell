@@ -1,0 +1,4 @@
+[proxmoxdell]
+dell ansible_ssh_host=192.168.1.11 ansible_user=kamil ansible_python_interpreter=/usr/bin/python3
+
+

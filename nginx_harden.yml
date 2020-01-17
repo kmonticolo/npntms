@@ -4,7 +4,7 @@
     - dev-sec.nginx-hardening
   vars: 
   - nginx_limit_conn: "default 200"
-  - nginx_keepalive_timeout: "30 30"
-  - nginx_client_body_timeout: 30
-  - nginx_client_header_timeout: 30
-  - nginx_send_timeout: 30
+  - nginx_keepalive_timeout: "60 60"
+  - nginx_client_body_timeout: 60
+  - nginx_client_header_timeout: 60
+  - nginx_send_timeout: 0
