@@ -1,5 +1,5 @@
 ---
-- hosts: npntms:!npntmswildfly
+- hosts: npntms:!npntmswildfly,ppos2
   become: yes
   vars: 
     swap_file_size_mb: '1024'
