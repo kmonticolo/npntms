@@ -1,5 +1,4 @@
 ---
-
 - name: Populate service facts
   service_facts:
 
@@ -34,7 +33,6 @@
   ignore_errors: yes
   changed_when: no
 
-
 - name: kopiowanie modulow postgresql i oracle
   copy:
     src: "wildfly/modules/{{ item }}/"
@@ -63,7 +61,6 @@
     - { url: 'http://central.maven.org/maven2/biz/paluch/logging/logstash-gelf/1.12.1/logstash-gelf-1.12.1.jar', dest: 'biz/paluch/logging/main'}
     - { url: 'http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar', dest: 'biz/paluch/logging/main'}
     - { url: 'http://central.maven.org/maven2/org/postgresql/postgresql/42.2.5/postgresql-42.2.5.jar', dest: 'org/postgresql/main'}
-
 
 #- name: zmiana wlasciciela i grupy dla katalogow wildfly
 

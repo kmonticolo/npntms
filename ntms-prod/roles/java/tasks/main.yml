@@ -1,5 +1,4 @@
 ---
-
 - name: determine if Java is already installed
   shell: which java
   register: oracle_java_task_installed
@@ -21,7 +20,6 @@
     oracle_java_version_installed="{{ oracle_java_task_version.stdout }}"
   when: oracle_java_task_version is defined and oracle_java_task_version.stdout is defined
   changed_when: False
-
 
 - include_tasks: ubuntu.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

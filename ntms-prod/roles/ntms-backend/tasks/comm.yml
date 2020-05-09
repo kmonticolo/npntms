@@ -1,11 +1,9 @@
 ---
-
 - name: Debug
   debug:
     var: "services['{{ vtms_comm_service }}']"
   tags:
     - vtms
-
 
 - name: download and extract base communication package
   unarchive:

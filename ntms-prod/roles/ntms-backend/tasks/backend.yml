@@ -1,5 +1,4 @@
 ---
-
 - name: czy datasource jest skonfigurowane
   command: "grep \\\"ntmsDS\\\" {{ wildfly_home }}/standalone/configuration/standalone.xml"
   register: ntms_ds_check
@@ -78,8 +77,6 @@
     group: "{{ ntms_user }}"
     remote_src: yes
   when: ntms_app_check.stat.exists == False
-#  tags:
-#    - ntms
 
 - name: restart wildfly
   service:
