@@ -4,5 +4,6 @@
 graylog_root_password_sha2: 8fdad9dc2a9d8720916e3e6e5fadece220d815b0f5908a1acda5cb2b7ce2a8f4
 graylog_password_secret: h89j5SEaywlnviehgRWNvIhxAcjDgO0Z8FkrE2GtcqMakNrKkiXtgwbSg39RkxZqHTltFQu7HZXZgGr6
 
-graylog_ip_addr: 192.99.119.27
-graylog_url: http://admin:jXZzfMKJyWTnnS5Edm@192.99.119.27:9000
+graylog_ip_addr: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
+graylog_url: "http://admin:jXZzfMKJyWTnnS5Edm@{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:9000"
