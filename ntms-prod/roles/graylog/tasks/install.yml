@@ -1,5 +1,4 @@
 ---
-
 - name: dodanie klucza repo elasticsearch
   apt_key:
     url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
@@ -13,7 +12,6 @@
     id: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
   tags:
     - graylog
-
 
 - name: dodanie repo mongodb do apt
   apt_repository:
@@ -36,7 +34,6 @@
     deb: https://packages.graylog2.org/repo/packages/graylog-2.5-repository_latest.deb
   tags:
     - graylog
-
 
 - name: instalacja mongodb
   package:
@@ -70,7 +67,6 @@
   tags:
     - graylog
 
-
 - name: konfiguracja graylog
   lineinfile:
     dest: /etc/graylog/server/server.conf
@@ -86,7 +82,6 @@
     - restart graylog
   tags:
     - graylog
-
 
 - name: wlaczenie uslug
   service:
@@ -106,8 +101,7 @@
     port: 9000
     delay: 10
 
-
-- name: konfiguracja zrogla gelf
+- name: konfiguracja zrodla gelf
   uri:
     url: "{{ graylog_url }}/api/system/inputs"
     method: POST
@@ -118,7 +112,7 @@
     status_code: 201
   when: graylog_inst.changed
 
-- name: konfiguracja zrogla syslog
+- name: konfiguracja zrodla syslog
   uri:
     url: "{{ graylog_url }}/api/system/inputs"
     method: POST
