@@ -1,24 +1,26 @@
 [servers]
-pntmsfront1.novelpay.pl ansible_ssh_host=192.99.119.24
-pntmsamq1.novelpay.pl ansible_ssh_host=192.99.119.25
-pntmswf1.novelpay.pl ansible_ssh_host=192.99.119.26
-pntmsdb1.novelpay.pl ansible_ssh_host=192.99.119.27
-pntmsfront2.novelpay.pl ansible_ssh_host=51.77.198.196
-pntmsamq2.novelpay.pl ansible_ssh_host=51.77.198.197
-pntmswf2.novelpay.pl ansible_ssh_host=51.77.198.198
-pntmsdb2.novelpay.pl ansible_ssh_host=51.77.198.199
-
+[servers:vars]
+[servers:children]
 [activemq]
 pntmsamq1.novelpay.pl ansible_ssh_host=192.99.119.25
 pntmsamq2.novelpay.pl ansible_ssh_host=51.77.198.197
+[activemq:vars]
+ansible_python_interpreter=/usr/bin/python3
 
 [wildfly]
 pntmswf1.novelpay.pl ansible_ssh_host=192.99.119.26
 pntmswf2.novelpay.pl ansible_ssh_host=51.77.198.198
+[wildfly:vars]
+ansible_python_interpreter=/usr/bin/python3
 
 [nginx]
 pntmsfront1.novelpay.pl ansible_ssh_host=192.99.119.24
 pntmsfront2.novelpay.pl ansible_ssh_host=51.77.198.196
+[nginx:vars]
+ansible_python_interpreter=/usr/bin/python3
 
 [graylog]
 pntmsdb1.novelpay.pl ansible_ssh_host=192.99.119.27
+[graylog:vars]
+ansible_python_interpreter=/usr/bin/python3
+
