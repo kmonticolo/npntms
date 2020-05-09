@@ -1,0 +1,36 @@
+---
+#- name: remove unattended updates
+#  hosts: npntms
+#  tasks:
+#  - name: remove unattended updates
+#    raw:  sed -i 's/APT::Periodic::Update-Package-Lists "1"\;/APT::Periodic::Update-Package-Lists "0"\;/' /etc/apt/apt.conf.d/20auto-upgrades
+
+- name: bootstrap
+  hosts: proxmox5vms
+  gather_facts: true
+  roles:
+    - { role: "nickjj.user", tags: "user", user_name: "adam", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/npntms/files/adam_id_rsa.pub" }
+    - { role: "nickjj.user", tags: "user", user_name: "kamil", user_groups: [ sudo ], user_local_ssh_key_path: "/home/kmonti/.ssh/id_rsa.pub" }
+    - { role: geerlingguy.ntp, tags: ntp }
+    - { role: ansible-ipv6, tags: ipv6 }
+
+
+# todo  fail2ban
+
+- name: preserve hostname
+  hosts: proxmox5vms
+  tasks:
+  - name: set preserve_hostname
+    lineinfile:
+      dest: /etc/cloud/cloud.cfg
+      regexp: '^preserve_hostname'
+      line: 'preserve_hostname: true'
+      state: present
+    tags: hostname
+
+  - name: set password adam
+    user:
+      name: adam
+      password: $6$1FR4d4zj$6LgmXa9yavJbY5iohV5exWrv183QYiE4zcAKCBf239E06yA5S0mKJnuRFipdhadkah.g8vxYMcQarRtiztajne
+    tags: user
+
