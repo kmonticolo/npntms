@@ -1,5 +1,4 @@
 ---
-
 - name: Create activemq user
   user:
     name: "{{ amq_user }}"
@@ -43,10 +42,6 @@
     src: activemq.slave.xml
     dest: "{{ amq_home }}/conf/activemq.xml"
   when: "not amq_master"
-
-#- name: ustawienia specyficzne master
-#  lineinfile:
-
 
 - name: kopiowanie ustawien uslugi systemd
   template:
