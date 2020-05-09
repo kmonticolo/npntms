@@ -29,17 +29,17 @@ npntmspl
 
 # https://ns525819.ip-142-4-215.net:8006/#v1:0:=node%2Fns525819:4::::8::5
 [npntmsca] # Kanada
-front1.novelpay.pl ansible_ssh_host=192.99.119.24 # front1
-amq1.novelpay.pl  ansible_ssh_host=192.99.119.25 # amq1
-wf1.novelpay.pl  ansible_ssh_host=192.99.119.26 # wf1
-db1.novelpay.pl  ansible_ssh_host=192.99.119.27 # db1
+front1.novelpay.pl ansible_ssh_host=192.99.119.24 ansible_python_interpreter=/usr/bin/python3 # front1
+amq1.novelpay.pl  ansible_ssh_host=192.99.119.25 ansible_python_interpreter=/usr/bin/python3 # amq1
+wf1.novelpay.pl  ansible_ssh_host=192.99.119.26 ansible_python_interpreter=/usr/bin/python3 # wf1
+db1.novelpay.pl  ansible_ssh_host=192.99.119.27 ansible_python_interpreter=/usr/bin/python3 # db1
 
 # https://ns303597.ip-94-23-207.eu:8006/#v1:0:=qemu%2F103:4::::8::
 [npntmspl] # Francja
-front2.novelpay.pl  ansible_ssh_host=51.77.198.196 # front2 
-amq2.novelpay.pl  ansible_ssh_host=51.77.198.197 # amq2
-wf2.novelpay.pl  ansible_ssh_host=51.77.198.198 # wf2
-db2.novelpay.pl  ansible_ssh_host=51.77.198.199 # db2
+front2.novelpay.pl  ansible_ssh_host=51.77.198.196 ansible_python_interpreter=/usr/bin/python3 # front2 
+amq2.novelpay.pl  ansible_ssh_host=51.77.198.197 ansible_python_interpreter=/usr/bin/python3 # amq2
+wf2.novelpay.pl  ansible_ssh_host=51.77.198.198 ansible_python_interpreter=/usr/bin/python3 # wf2
+db2.novelpay.pl  ansible_ssh_host=51.77.198.199 ansible_python_interpreter=/usr/bin/python3 # db2
 
 [npntmsfront]
 # 192.99.119.24 # front1
