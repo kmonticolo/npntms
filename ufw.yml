@@ -91,6 +91,10 @@
         to_port: 10050
         protocol: tcp
         from_ip: 164.132.63.48
+      - rule: allow
+        to_port: 10050
+        protocol: tcp
+        from_ip: 178.32.253.4
 
 - name: ufw | Allow all traffic between hosts and sites
   hosts: npntmsamq, npntmswildfly, postgresql
@@ -165,6 +169,10 @@
         to_port: 10050
         protocol: tcp
         from_ip: 164.132.63.48
+      - rule: allow
+        to_port: 10050
+        protocol: tcp
+        from_ip: 178.32.253.4
 # allow old ntms traffic
       - rule: allow
         from_ip: 178.32.205.89/32
