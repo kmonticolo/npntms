@@ -14,6 +14,11 @@
       - rule: allow
         to_port: 35623
 #/urbackup
+# api dla planet
+      - rule: allow
+        from_ip: 88.120.142.84/32
+        protocol: tcp
+        comment: 'api dla planet'
       - rule: allow
         to_port: 80
         protocol: tcp
