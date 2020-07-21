@@ -34,7 +34,7 @@ server {
 
         ssl_session_cache shared:ssl_session_cache:5m;
 
-        client_max_body_size 100m;
+        client_max_body_size 150m;
 				ssl_client_certificate /etc/nginx/ssl/ntmsca.crt;
 				ssl_verify_client off;
 
